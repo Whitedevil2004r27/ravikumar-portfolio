@@ -3,6 +3,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import DotField from './DotField';
+import LiveStatus from './LiveStatus';
 
 export default function Hero() {
   return (
@@ -26,9 +27,9 @@ export default function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <h2 className="text-[var(--primary)] font-medium tracking-widest mb-4 uppercase">
-            Available for new opportunities
-          </h2>
+          <div className="mb-6 flex justify-center">
+            <LiveStatus />
+          </div>
           <h1 className="text-5xl md:text-8xl font-bold mb-6 tracking-tight">
             Ravikumar <span className="text-[var(--primary)]">J</span>
           </h1>

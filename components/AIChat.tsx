@@ -179,7 +179,7 @@ export default function AIChat() {
                 className="flex-grow bg-white/5 border border-white/10 rounded-full px-4 py-2 text-sm outline-none focus:ring-1 focus:ring-[var(--primary)] transition-all placeholder-gray-600 disabled:opacity-50"
               />
               <button
-                onClick={handleSend}
+                onClick={() => handleSend()}
                 disabled={isLoading || !input.trim()}
                 className="bg-[var(--primary)] text-black p-2.5 rounded-full hover:scale-105 transition-all disabled:opacity-40 disabled:scale-100 flex-shrink-0"
               >

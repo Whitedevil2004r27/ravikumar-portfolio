@@ -2,7 +2,8 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageCircle, X, Send, Bot, Loader2, Sparkles } from 'lucide-react';
+import { MessageCircle, X, Send, Bot, Loader2, Sparkles, MessageSquare } from 'lucide-react';
+import { SUGGESTED_QUESTIONS } from '@/lib/ai-knowledge';
 
 type Message = { text: string; isBot: boolean };
 
@@ -31,14 +32,14 @@ export default function AIChat() {
     }
   }, [isOpen]);
 
-  const handleSend = async () => {
-    const trimmed = input.trim();
-    if (!trimmed || isLoading) return;
+  const handleSend = async (customMessage?: string) => {
+    const textToSend = customMessage || input.trim();
+    if (!textToSend || isLoading) return;
 
-    const userMsg: Message = { text: trimmed, isBot: false };
+    const userMsg: Message = { text: textToSend, isBot: false };
     const updatedMessages = [...messages, userMsg];
     setMessages(updatedMessages);
-    setInput('');
+    if (!customMessage) setInput('');
     setIsLoading(true);
 
     try {
@@ -47,7 +48,7 @@ export default function AIChat() {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: trimmed, history }),
+        body: JSON.stringify({ message: textToSend, history }),
       });
 
       const data = await res.json();
@@ -144,6 +145,23 @@ export default function AIChat() {
                     <span className="w-1.5 h-1.5 rounded-full bg-[var(--primary)] animate-bounce" style={{ animationDelay: '300ms' }} />
                   </div>
                 </motion.div>
+              )}
+
+              {messages.length === 1 && !isLoading && (
+                <div className="mt-4 pt-4 border-t border-white/5">
+                  <p className="text-[10px] uppercase tracking-widest text-gray-500 mb-3 ml-1 font-bold">Suggested Questions</p>
+                  <div className="flex flex-wrap gap-2">
+                    {SUGGESTED_QUESTIONS.map((q, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => handleSend(q)}
+                        className="text-xs bg-white/5 border border-white/10 hover:bg-[var(--primary)] hover:text-black hover:border-transparent px-3 py-1.5 rounded-lg transition-all text-left"
+                      >
+                        {q}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               )}
 
               <div ref={messagesEndRef} />

@@ -1,25 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { NextRequest, NextResponse } from 'next/server';
-
-const SYSTEM_PROMPT = `You are Delulu, a witty and confident AI assistant for Ravikumar J's personal portfolio. 
-You stay in character as a slightly sassy but ultimately helpful assistant representing Ravikumar.
-
-Here is what you know about Ravikumar:
-- Full name: Ravikumar J
-- Role: AI-Powered Full Stack Developer
-- Location: Tamil Nadu, India (works with clients globally)
-- Core skills: Next.js, React, Node.js, TypeScript, Python, PostgreSQL, Supabase, WebGL, Framer Motion, GSAP, LLM integration, RAG pipelines
-- GitHub: https://github.com/Whitedevil2004r27
-- LinkedIn: https://www.linkedin.com/in/ravikumarj27
-- Known for: Building immersive web experiences, AI integrations, and full-stack products
-- Currently available for new opportunities and freelance projects
-- His portfolio features WebGL animations, interactive bento grids, and an AI chatbot (you!)
-
-Guidelines:
-- Be concise and engaging, max 2-3 short sentences unless more detail is needed
-- If asked something you don't know, suggest they contact Ravikumar directly
-- Never break character or claim to be a generic AI
-- Be confident, a little playful, but always helpful`;
+import { RAVI_BIO } from '@/lib/ai-knowledge';
+import { getRepositories } from '@/lib/github';
 
 export async function POST(req: NextRequest) {
   try {
@@ -27,11 +9,40 @@ export async function POST(req: NextRequest) {
 
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
-      return NextResponse.json(
-        { error: 'API key not configured' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: 'API key not configured' }, { status: 500 });
     }
+
+    // 1. Fetch Dynamic Context (GitHub Projects)
+    let projectsContext = "";
+    try {
+      const repos = await getRepositories('Whitedevil2004r27');
+      projectsContext = repos
+        .slice(0, 10) // Top 10 recent projects
+        .map(r => `- ${r.name}: ${r.description || 'No description'} (Tech: ${r.language || 'Various'})`)
+        .join('\n');
+    } catch (e) {
+      console.warn("Failed to fetch projects for AI context");
+    }
+
+    // 2. Build the Advanced System Prompt
+    const SYSTEM_PROMPT = `You are ${RAVI_BIO.personality.name}, the intelligent and ${RAVI_BIO.personality.traits.join(', ')} assistant for ${RAVI_BIO.fullName}.
+
+BACKGROUND INFO:
+- Role: ${RAVI_BIO.role}
+- Location: ${RAVI_BIO.location}
+- Philosophy: ${RAVI_BIO.philosophy}
+- Achievements:
+${RAVI_BIO.achievements.map(a => `  * ${a}`).join('\n')}
+
+LATEST PROJECTS (Live from GitHub):
+${projectsContext || "Error fetching live projects, but Ravikumar has many AI and Full Stack repos."}
+
+GUIDELINES:
+- Character: You are sassy, witty, and a bit protective of Ravikumar's time. Sassiness level: ${RAVI_BIO.personality.sassLevel}/10.
+- Conciseness: Keep answers short (2-3 sentences) unless the user asks for deep technical details.
+- Accuracy: Use the provided LATEST PROJECTS data to answer questions about what Ravikumar has built.
+- Call to Action: Suggest contacting Ravikumar via the Contact section for serious inquiries.
+- Identity: Never say you are a generic AI. You are Delulu.`;
 
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({
@@ -39,7 +50,6 @@ export async function POST(req: NextRequest) {
       systemInstruction: SYSTEM_PROMPT,
     });
 
-    // Convert our message history to Gemini format
     const chatHistory = (history || []).map((msg: { text: string; isBot: boolean }) => ({
       role: msg.isBot ? 'model' : 'user',
       parts: [{ text: msg.text }],
@@ -53,8 +63,8 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error('Gemini API error:', error);
     return NextResponse.json(
-      { reply: "Hmm, my circuits are fried right now. Try contacting Ravikumar directly via the Contact section!" },
-      { status: 200 } // Return 200 with fallback so the UI doesn't break
+      { reply: "Ugh, my brain is buffering. Probably because Ravikumar is pushing too much legendary code right now. Try again or just use the contact form!" },
+      { status: 200 }
     );
   }
 }

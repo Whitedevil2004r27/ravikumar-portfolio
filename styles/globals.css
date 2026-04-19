@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+:root {
+  --background: #0B0F19;
+  --foreground: #E5E7EB;
+  --primary: #00F5FF;
+  --accent: #7C3AED;
+  --glass: rgba(11, 15, 25, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.1);
+}
+
+@layer base {
+  body {
+    @apply bg-[var(--background)] text-[var(--foreground)] antialiased selection:bg-[var(--primary)] selection:text-[var(--background)];
+    font-feature-settings: "ss01", "ss02", "cv01", "cv02", "cv03";
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-[var(--glass)] backdrop-blur-xl border border-[var(--glass-border)] rounded-2xl;
+  }
+  
+  .neon-text {
+    @apply text-[var(--primary)] drop-shadow-[0_0_8px_rgba(0,245,255,0.5)];
+  }
+
+  .neon-glow {
+    @apply shadow-[0_0_20px_rgba(0,245,255,0.15)] border-[var(--primary)]/20;
+  }
+  
+  .btn-primary {
+    @apply px-8 py-3 bg-[var(--primary)] text-[var(--background)] font-bold rounded-full 
+           hover:shadow-[0_0_25px_rgba(0,245,255,0.4)] transition-all duration-300 transform hover:-translate-y-1;
+  }
+
+  .btn-outline {
+    @apply px-8 py-3 border border-[var(--primary)] text-[var(--primary)] font-bold rounded-full 
+           hover:bg-[var(--primary)] hover:text-[var(--background)] transition-all duration-300;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+::-webkit-scrollbar-thumb {
+  background: #1F2937;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+.glow-cursor {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(0, 245, 255, 0.08) 0%, transparent 70%);
+  pointer-events: none;
+  position: fixed;
+  z-index: 0;
+  transform: translate(-50%, -50%);
+}

@@ -51,7 +51,7 @@ export default function About() {
   }, []);
 
   return (
-    <section id="about" className="py-24 px-4 bg-[#0D121F] overflow-hidden">
+    <section id="about" className="py-16 md:py-24 px-4 bg-[#0D121F]">
       <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
         {/* Bio */}
         <motion.div
@@ -82,7 +82,7 @@ export default function About() {
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="glass-card p-10 neon-glow"
+          className="glass-card p-6 md:p-10 neon-glow overflow-hidden"
         >
           <h3 className="text-xl font-bold mb-8 text-white uppercase tracking-wider">Expertise</h3>
           

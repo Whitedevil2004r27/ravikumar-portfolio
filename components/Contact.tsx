@@ -105,7 +105,7 @@ export default function Contact() {
           </div>
 
           {/* Card */}
-          <div className="bg-[#0D121F]/60 backdrop-blur-md rounded-3xl border border-white/8 shadow-2xl p-8 md:p-10">
+          <div className="bg-[#0D121F]/60 backdrop-blur-md rounded-3xl border border-white/10 shadow-2xl p-6 md:p-10">
             <AnimatePresence mode="wait">
               {formState === 'success' ? (
                 <motion.div
@@ -209,7 +209,7 @@ export default function Contact() {
           </div>
 
           {/* Social Links */}
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-6 items-center mt-8 bg-white/3 backdrop-blur-sm p-6 rounded-2xl border border-white/5">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-6 items-center mt-8 bg-white/5 backdrop-blur-sm p-6 rounded-2xl border border-white/5">
             <a
               href="https://github.com/Whitedevil2004r27"
               target="_blank"
@@ -228,7 +228,7 @@ export default function Contact() {
             </a>
             <a
               href="mailto:ravikumar@example.com"
-              className="hidden md:flex items-center justify-center gap-3 text-gray-400 hover:text-[var(--primary)] transition-colors"
+              className="col-span-2 md:col-span-1 flex items-center justify-center gap-3 text-gray-400 hover:text-[var(--primary)] transition-colors"
             >
               <Mail size={24} /> <span>Email</span>
             </a>

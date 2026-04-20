@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ExternalLink, Terminal } from 'lucide-react';
+import { ExternalLink, Terminal, Globe } from 'lucide-react';
 import BorderGlow from './BorderGlow';
 
 const GithubIcon = () => (
@@ -70,60 +70,81 @@ export default function Projects() {
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
           >
             <AnimatePresence mode="popLayout">
-              {filteredRepos.slice(0, 9).map((repo) => (
-                <motion.div
-                  key={repo.id}
-                  layout
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  whileHover={{ y: -10 }}
-                  className="h-full group"
-                >
-                  <BorderGlow
-                    glowColor="180 100 50"
-                    backgroundColor="#0B0F19"
-                    borderRadius={24}
-                    glowRadius={40}
-                    coneSpread={20}
-                    className="h-full"
-                    colors={['#00F5FF', '#38bdf8', '#8400FF']}
+              {filteredRepos.slice(0, 9).map((repo) => {
+                const liveUrl = repo.homepage && repo.homepage.startsWith('http')
+                  ? repo.homepage
+                  : repo.html_url;
+
+                return (
+                  <motion.a
+                    key={repo.id}
+                    href={liveUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    layout
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    whileHover={{ y: -10 }}
+                    className="h-full group block cursor-pointer"
                   >
-                    <div className="p-8 flex flex-col h-full">
-                      <div className="flex justify-between items-start mb-6">
-                        <div className="p-3 bg-gray-900 rounded-xl group-hover:bg-[var(--primary)] group-hover:text-[var(--background)] transition-colors">
-                          <Terminal size={24} />
+                    <BorderGlow
+                      glowColor="180 100 50"
+                      backgroundColor="#0B0F19"
+                      borderRadius={24}
+                      glowRadius={40}
+                      coneSpread={20}
+                      className="h-full"
+                      colors={['#00F5FF', '#38bdf8', '#8400FF']}
+                    >
+                      <div className="p-8 flex flex-col h-full">
+                        <div className="flex justify-between items-start mb-6">
+                          <div className="p-3 bg-gray-900 rounded-xl group-hover:bg-[var(--primary)] group-hover:text-[var(--background)] transition-colors">
+                            <Terminal size={24} />
+                          </div>
+                          <div className="flex items-center gap-3 text-gray-400 group-hover:text-white transition-colors">
+                            {/* Live badge */}
+                            {repo.homepage && repo.homepage.startsWith('http') && (
+                              <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-full border border-[var(--primary)] text-[var(--primary)] flex items-center gap-1">
+                                <Globe size={10} /> Live
+                              </span>
+                            )}
+                            {/* GitHub icon always links to repo */}
+                            <a
+                              href={repo.html_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                              className="hover:text-[var(--primary)] transition-colors"
+                              title="View on GitHub"
+                            >
+                              <GithubIcon />
+                            </a>
+                          </div>
                         </div>
-                        <div className="flex gap-4 text-gray-400 group-hover:text-white transition-colors">
-                          <a href={repo.html_url} target="_blank" rel="noopener noreferrer">
-                            <GithubIcon />
-                          </a>
+
+                        <h3 className="text-xl font-bold mb-3 group-hover:text-[var(--primary)] transition-colors capitalize">
+                          {repo.name.replace(/-/g, ' ')}
+                        </h3>
+                        
+                        <p className="text-gray-400 text-sm mb-6 flex-grow line-clamp-3">
+                          {repo.description || "No description provided. Explore this project on GitHub to see more details."}
+                        </p>
+
+                        <div className="flex items-center justify-between pt-6 border-t border-[var(--glass-border)] relative z-10">
+                          <span className="text-xs font-mono text-gray-500 uppercase tracking-widest">
+                            {repo.language || 'Documentation'}
+                          </span>
+                          <span className="text-[var(--primary)] text-sm font-bold flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            {repo.homepage && repo.homepage.startsWith('http') ? 'Visit Site' : 'View Repo'}
+                            <ExternalLink size={14} />
+                          </span>
                         </div>
                       </div>
-
-                      <h3 className="text-xl font-bold mb-3 group-hover:text-[var(--primary)] transition-colors">
-                        {repo.name.replace(/-/g, ' ')}
-                      </h3>
-                      
-                      <p className="text-gray-400 text-sm mb-6 flex-grow line-clamp-3">
-                        {repo.description || "No description provided. Explore this project on GitHub to see more details."}
-                      </p>
-
-                      <div className="flex items-center justify-between pt-6 border-t border-[var(--glass-border)] relative z-10">
-                        <span className="text-xs font-mono text-gray-500 uppercase tracking-widest">
-                          {repo.language || 'Documentation'}
-                        </span>
-                        <a 
-                          href={repo.html_url} 
-                          className="text-[var(--primary)] text-sm font-bold flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                        >
-                          Details <ExternalLink size={14} />
-                        </a>
-                      </div>
-                    </div>
-                  </BorderGlow>
-                </motion.div>
-              ))}
+                    </BorderGlow>
+                  </motion.a>
+                );
+              })}
             </AnimatePresence>
           </motion.div>
         )}
